@@ -1,23 +1,36 @@
-import logo from './logo.svg';
+
 import './App.css';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import Home from './components/Home';
+import Loader from './components/Loader';
+import { Auth0Provider, useAuth0 } from '@auth0/auth0-react';
+import Login from './components/Login';
+import About from './components/About';
 
 function App() {
+
+  const { isAuthenticated, isLoading } = useAuth0();
+
+  if(isLoading){
+    return <Loader/>;
+  }
+
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Auth0Provider
+       domain="dev-t2asdjl8b7j5ur7z.us.auth0.com"
+       clientId="Mapb5UJm7TuPyNT4opJ9N2O3rQtNMFzp"
+       authorizationParams={{
+         redirect_uri: window.location.origin
+       }}
+       >
+      <Routes>
+        <Route path="/" element={<Login/>}/>
+        <Route path="/home" element={isAuthenticated ? <Home /> : <Navigate to="/" />} />
+        {/* <Route path="/about" element={<About/>}/> */}
+      </Routes>
+      </Auth0Provider>
     </div>
   );
 }
